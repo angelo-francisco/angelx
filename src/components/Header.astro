@@ -1,14 +1,14 @@
 ---
-import { SITE_TITLE } from "../consts";
+import { SITE_TITLE, SITE_URL } from "../consts";
 import HeaderLink from "./HeaderLink.astro";
 ---
 
 <header>
 	<nav>
-		<h2><a href="/">{SITE_TITLE}</a></h2>
+		<h2><a href={SITE_URL}>{SITE_TITLE}</a></h2>
 		<div class="internal-links">
 			<HeaderLink href="/">Blog</HeaderLink>
-			<HeaderLink href="/about">Sobre Mim</HeaderLink>
+			<HeaderLink href={`${SITE_URL}/about`}>Sobre Mim</HeaderLink>
 		</div>
 		<div class="social-links">
 			<a href="https://github.com/angelo-francisco" target="_blank">
