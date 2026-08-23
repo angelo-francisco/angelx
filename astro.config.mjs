@@ -11,23 +11,38 @@ export default defineConfig({
 	fonts: [
 		{
 			provider: fontProviders.local(),
-			name: 'Atkinson',
-			cssVariable: '--font-atkinson',
+			name: 'SF',
+			cssVariable: '--font-sf',
 			fallbacks: ['sans-serif'],
 			options: {
 				variants: [
 					{
-						src: ['./src/assets/fonts/atkinson-regular.woff'],
+						src: ['./src/assets/fonts/blackitalic.otf'],
 						weight: 400,
-						style: 'normal',
+						style: 'italic',
 						display: 'swap',
 					},
 					{
-						src: ['./src/assets/fonts/atkinson-bold.woff'],
-						weight: 700,
+						src: ['./src/assets/fonts/bold.otf'],
+						weight: 800,
 						style: 'normal',
 						display: 'swap',
-					},
+					}, {
+						src: ['./src/assets/fonts/medium.otf'],
+						weight: 500,
+						style: 'normal',
+						display: 'swap',
+					}, {
+						src: ['./src/assets/fonts/regular.otf'],
+						weight: 400,
+						style: 'normal',
+						display: 'swap',
+					},{
+						src: ['./src/assets/fonts/heavyitalic.otf'],
+						weight: 500,
+						style: 'italic',
+						display: 'swap',
+					}
 				],
 			},
 		},
