@@ -1,56 +1,26 @@
 // @ts-check
+import mdx from "@astrojs/mdx";
+import sitemap from "@astrojs/sitemap";
+import { defineConfig } from "astro/config";
 
-import mdx from '@astrojs/mdx';
-import sitemap from '@astrojs/sitemap';
-import { defineConfig, fontProviders } from 'astro/config';
-
-// https://astro.build/config
 export default defineConfig({
-	site: 'https://angelo-francisco.github.io/angelx/',
-	base: '/angelx',
-	integrations: [mdx(), sitemap()],
-	vite: {
-		server: {
-			allowedHosts: true,
-		},
-	},
-	fonts: [
-		{
-			provider: fontProviders.local(),
-			name: 'SF',
-			cssVariable: '--font-sf',
-			fallbacks: ['sans-serif'],
-			options: {
-				variants: [
-					{
-						src: ['./src/assets/fonts/blackitalic.otf'],
-						weight: 400,
-						style: 'italic',
-						display: 'swap',
-					},
-					{
-						src: ['./src/assets/fonts/bold.otf'],
-						weight: 800,
-						style: 'normal',
-						display: 'swap',
-					}, {
-						src: ['./src/assets/fonts/medium.otf'],
-						weight: 500,
-						style: 'normal',
-						display: 'swap',
-					}, {
-						src: ['./src/assets/fonts/regular.otf'],
-						weight: 400,
-						style: 'normal',
-						display: 'swap',
-					},{
-						src: ['./src/assets/fonts/heavyitalic.otf'],
-						weight: 500,
-						style: 'italic',
-						display: 'swap',
-					}
-				],
-			},
-		},
-	],
+  site: "https://angelo-francisco.github.io",
+  base: "/angelx",
+  output: "static",
+  trailingSlash: "always",
+  integrations: [mdx(), sitemap()],
+  // Hashed scripts/styles work on static GitHub Pages without unsafe-inline.
+  security: {
+    csp: {
+      directives: [
+        "default-src 'self'",
+        "img-src 'self' https: data:",
+        "object-src 'none'",
+        "base-uri 'self'",
+        "form-action 'self'",
+      ],
+    },
+  },
+  // Avoid inline styles from Shiki, which conflict with a strict CSP.
+  markdown: { syntaxHighlight: false },
 });

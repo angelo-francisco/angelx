@@ -431,3 +431,27 @@ h2 {
     scroll-behavior: auto;
   }
 }
+
+.skip-link {
+  position: fixed;
+  top: 12px;
+  left: 20px;
+  z-index: 200;
+  padding: 10px 16px;
+  background: var(--paper);
+  color: var(--ink);
+  border: 1px solid var(--ink);
+  transform: translateY(-200%);
+}
+.skip-link:focus {
+  transform: translateY(0);
+}
+#main-content {
+  scroll-margin-top: calc(var(--header-height) + 12px);
+}
+.prose pre {
+  overflow-x: auto;
+  padding: 20px;
+  background: #f6f6f6;
+  font-size: 15px;
+}
