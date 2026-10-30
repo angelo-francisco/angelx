@@ -52,7 +52,7 @@ const excerpt = (post: (typeof posts)[number]) => post.data.description || "Uma 
 					<h2 id="archive-title">ARQUIVO</h2>
 					{Object.entries(archive).sort(([a], [b]) => Number(b) - Number(a)).map(([year, months]) => (
 						<details class="year-group" open={Number(year) === currentYear}>
-							<summary><span>{year}</span><span class="count">{Object.values(months).flat().length}<b aria-hidden="true"></b></span></summary>
+							<summary><span>{year}</span><span class="count"><b aria-hidden="true"></b></span></summary>
 							<div class="months">
 								{Object.entries(months).sort(([a], [b]) => b.localeCompare(a)).map(([key, monthPosts]) => <button type="button" data-filter-month={key}><span>{monthFormatter.format(monthPosts[0].data.pubDate)}</span><span>{monthPosts.length}</span></button>)}
 							</div>
