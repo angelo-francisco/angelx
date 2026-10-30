@@ -15,9 +15,20 @@ const base = import.meta.env.BASE_URL;
 	.site-header { display:flex; justify-content:space-between; align-items:center; gap:2rem; width:100%; max-width:1250px; margin:0 auto; padding:1rem 0; border-bottom:1px solid var(--border); }
 	.brand { color:var(--ink); font:1.55rem/1.1 Newsreader, Georgia, serif; text-decoration:none; }
 	.site-nav { display:flex; align-items:center; gap:1rem; font:0.78rem/1 IBM Plex Mono, monospace; }
-	.site-nav a { color:var(--ink); text-decoration:none; transition:color .2s ease; }
-	.site-nav a:hover { color:var(--accent); }
+	.site-nav a { color:var(--ink); text-decoration:none; transition:color .2s ease, transform .2s ease; }
+	.site-nav a:hover { color:var(--accent); transform:translateY(-1px); }
+	.site-nav .icon-link { display:inline-flex; align-items:center; justify-content:center; }
 	.site-nav svg { width:1rem; height:1rem; margin-left:.25rem; fill:currentColor; vertical-align:-.15em; }
 	.nav-divider { width:1px; height:1.2rem; background:var(--border); }
 	@media (max-width:700px) { .site-header { padding:1rem; } .brand { font-size:1.3rem; } .site-nav { gap:.65rem; font-size:.68rem; } .site-nav span[aria-hidden] { display:none; } }
 </style>
+<script>
+	document.querySelectorAll<HTMLAnchorElement>('a[href^="/angelx/"]').forEach((link) => {
+		link.addEventListener('click', (event) => {
+			if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || link.target === '_blank') return;
+			event.preventDefault();
+			document.body.classList.add('is-navigating');
+			window.setTimeout(() => { window.location.href = link.href; }, 380);
+		});
+	});
+</script>
