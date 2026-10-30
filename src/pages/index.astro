@@ -60,6 +60,7 @@ const years = [...new Set(posts.map((p) => p.data.pubDate.getUTCFullYear()))];
                 "pt-PT",
               )}
               data-month={monthKey(post.data.pubDate)}
+              data-tags={JSON.stringify(post.data.tags)}
             >
               <p class="post-date">
                 <FormattedDate date={post.data.pubDate} />
@@ -145,19 +146,25 @@ const years = [...new Set(posts.map((p) => p.data.pubDate.getUTCFullYear()))];
         ...document.querySelectorAll<HTMLElement>(".post-preview"),
       ];
       let month = "";
+      let activeTag = "";
       function filter() {
         let count = 0;
         const query = input.value.trim().toLocaleLowerCase("pt-PT");
         cards.forEach((card) => {
           card.hidden = !(
             card.dataset.search?.includes(query) &&
-            (!month || card.dataset.month === month)
+            (!month || card.dataset.month === month) &&
+            (!activeTag ||
+              JSON.parse(card.dataset.tags ?? "[]").includes(activeTag))
           );
           if (!card.hidden) count++;
         });
         document.querySelector<HTMLElement>(".empty-state")!.hidden = count > 0;
       }
-      input.addEventListener("input", filter);
+      input.addEventListener("input", () => {
+        activeTag = "";
+        filter();
+      });
       document.querySelector("form")?.addEventListener("submit", (event) => {
         event.preventDefault();
         filter();
@@ -177,13 +184,15 @@ const years = [...new Set(posts.map((p) => p.data.pubDate.getUTCFullYear()))];
         .querySelectorAll<HTMLButtonElement>("[data-tag]")
         .forEach((button) =>
           button.addEventListener("click", () => {
-            input.value = button.dataset.tag!;
+            activeTag = button.dataset.tag!;
+            input.value = "";
             month = "";
             filter();
           }),
         );
       document.querySelector(".reset-filter")?.addEventListener("click", () => {
         input.value = "";
+        activeTag = "";
         month = "";
         filter();
       });

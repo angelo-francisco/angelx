@@ -9,7 +9,7 @@ const { date } = Astro.props;
 <time datetime={date.toISOString()}>
   {date.toLocaleDateString("pt-PT", {
     year: "numeric",
-      timeZone: "UTC",
+    timeZone: "UTC",
     month: "short",
     day: "numeric",
   })}
