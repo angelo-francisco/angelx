@@ -22,29 +22,38 @@ const base = import.meta.env.BASE_URL;
 	<head>
 		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
 		<style>
-			.home-layout { display: grid; grid-template-columns: minmax(0, 1fr) 270px; gap: 4rem; align-items: start; }
-			.eyebrow, .archive-label, .side-label { color: var(--accent); font: 700 .75rem/1.2 monospace; letter-spacing: .12em; text-transform: uppercase; }
-			.intro { max-width: 570px; font-size: 1.18rem; color: var(--muted); }
-			.archive-section { display: flex; flex-direction: column; padding-top: 2.5rem; gap: 1rem; }
-			.archive-label { color: var(--muted); }
-			.archive-group { border: 1px solid var(--border); background: var(--paper-dark); box-shadow: 5px 5px 0 var(--shadow); animation: archive-in .65s cubic-bezier(.22, 1, .36, 1) both; } .archive-group:nth-of-type(3) { animation-delay: .08s; } .archive-group:nth-of-type(4) { animation-delay: .16s; } @keyframes archive-in { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
-			.archive-group summary { cursor: pointer; list-style: none; padding: 1rem 1.2rem; display: flex; justify-content: space-between; align-items: center; font: 800 1.3rem monospace; color: var(--accent); }
+			.home-layout { display: grid; grid-template-columns: minmax(0, 1fr) 270px; gap: 2rem; align-items: start; border-top: 1px solid var(--border); }
+			.hero { grid-column: 1 / -1; text-align: center; padding: 3.5rem 1rem 2.75rem; border-bottom: 1px solid var(--border); }
+			.eyebrow, .archive-label, .side-label { color: var(--ink); font: .72rem/1.2 monospace; letter-spacing: .08em; text-transform: uppercase; }
+			.eyebrow { display: none; }
+			.hero h1 { font-size: clamp(2rem, 3vw, 2.55rem); font-weight: 500; letter-spacing: -.04em; }
+			.hero h1 em { font-style: normal; }
+			.intro { max-width: 600px; margin: 0 auto 1.75rem; color: var(--muted); font-size: 1rem; }
+			.search-wrap { display: flex; max-width: 420px; margin: auto; border: 1px solid var(--ink); }
+			.search { flex: 1; min-width: 0; padding: .65rem .8rem; border: 0; color: var(--ink); background: var(--paper); font: .82rem monospace; outline: 0; }
+			.search-wrap button { width: 3rem; border: 0; border-left: 1px solid var(--border); background: var(--paper); color: var(--ink); }
+			.archive-section { display: flex; flex-direction: column; padding-top: 1.75rem; gap: 0; }
+			.archive-label { padding-bottom: 1rem; color: var(--muted); }
+			.archive-group { border-top: 1px solid var(--border); animation: archive-in .65s cubic-bezier(.22, 1, .36, 1) both; }
+			.archive-group:last-of-type { border-bottom: 1px solid var(--border); }
+			@keyframes archive-in { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+			.archive-group summary { cursor: pointer; list-style: none; padding: 1rem 0; display: flex; justify-content: space-between; align-items: center; font: 1rem Georgia, serif; color: var(--ink); }
 			.archive-group summary::-webkit-details-marker { display: none; }
-			.archive-group summary::after { content: "+"; font-weight: 400; }
-			.archive-group[open] summary::after { content: "−"; }
-			.post-list { padding: 0 1.2rem 1rem; }
-			.post-list a { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; text-decoration: none; padding: .85rem 0; border-top: 1px dashed var(--border); min-width: 0; }
-			.post-list h3 { margin: 0; font-size: 1.15rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-			.post-list h3::before { content: "↳ "; color: var(--accent); }
-			.archive-month, .post-list .date { margin: 0; color: var(--muted); font: .72rem monospace; text-transform: capitalize; white-space: nowrap; }
-			.sidebar { position: sticky; top: 1.5rem; display: flex; flex-direction: column; gap: 1.5rem; }
-			.side-card { border: 1px solid var(--border); padding: 1.2rem; background: var(--paper-dark); box-shadow: 5px 5px 0 var(--shadow); }
-			.search { width: 100%; margin-top: .8rem; padding: .7rem .75rem; border: 1px solid var(--border); border-radius: 0; color: var(--ink); background: var(--paper); font: .9rem monospace; }
-			.quick-links { display: flex; flex-direction: column; gap: .6rem; margin: .8rem 0 0; padding: 0; list-style: none; }
-			.quick-links a { display: block; color: var(--ink); text-decoration: none; font-size: .95rem; line-height: 1.25; }
+			.archive-group summary::after { content: "⌄"; font: 1rem monospace; }
+			.archive-group[open] summary::after { content: "⌃"; }
+			.post-list { padding: 0 1.5rem .75rem; }
+			.post-list a { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; text-decoration: none; padding: .7rem 0; border-top: 1px solid var(--border); min-width: 0; }
+			.post-list h3 { margin: 0; font-size: 1.08rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+			.post-list h3::before { content: ""; }
+			.archive-month, .post-list .date { margin: 0; color: var(--muted); font: .7rem monospace; text-transform: capitalize; white-space: nowrap; }
+			.sidebar { position: sticky; top: 5.5rem; display: flex; flex-direction: column; gap: 0; padding: 1.75rem 0 0 2.5rem; border-left: 1px solid var(--border); min-height: 420px; }
+			.side-card { padding: 0 0 1.5rem; background: transparent; }
+			.side-card + .side-card { padding-top: 1.5rem; border-top: 1px solid var(--border); }
+			.quick-links { display: flex; flex-direction: column; gap: .75rem; margin: .9rem 0 0; padding: 0; list-style: none; }
+			.quick-links a { display: block; color: var(--ink); text-decoration: none; font-size: .9rem; line-height: 1.25; }
 			.quick-links a:hover { color: var(--accent); }
 			.no-results { display: none; color: var(--muted); font: .85rem monospace; }
-			@media (max-width: 800px) { .home-layout { display: block; } .sidebar { position: static; margin-top: 3rem; } }
+			@media (max-width: 800px) { .home-layout { display: block; } .hero { border-bottom: 1px solid var(--border); } .sidebar { position: static; margin-top: 2rem; padding: 1.5rem 0 0; border-left: 0; border-top: 1px solid var(--border); } }
 			@media (max-width: 520px) { .post-list a { align-items: flex-start; flex-direction: column; gap: .2rem; } }
 		</style>
 	</head>
@@ -52,10 +61,14 @@ const base = import.meta.env.BASE_URL;
 		<Header />
 		<main>
 			<div class="home-layout">
+				<section class="hero" aria-labelledby="page-title">
+					<p class="eyebrow">notas de um cérebro em movimento</p>
+					<h1 id="page-title">My brain&apos;s backup, ideas and thoughts.</h1>
+					<p class="intro">Um espaço lento para pensar, guardar ideias e acompanhar a própria evolução.</p>
+					<div class="search-wrap"><label class="sr-only" for="post-search">Pesquisar textos</label><input class="search" id="post-search" type="search" placeholder="Pesquisar textos..." /><button type="button" aria-label="Pesquisar">⌕</button></div>
+				</section>
 				<div>
-					<p class="eyebrow">notas de um cérebro em movimento · edição 01</p>
-					<h1>Um arquivo pessoal<br /><em>para ideias soltas.</em></h1>
-					<p class="intro">Bem-vindo ao meu pequeno canto da internet. Aqui guardo aprendizados, histórias e perguntas que ainda não têm resposta.</p>
+
 					<section class="archive-section" aria-labelledby="archive-heading">
 						<p id="archive-heading" class="archive-label">arquivo / navegar por data</p>
 						{Object.entries(archive).map(([year, yearPosts]) => (

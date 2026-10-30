@@ -29,7 +29,7 @@ body {
 	margin: 0; padding: 0; text-align: left; background: var(--paper); color: var(--ink);
 	font-size: 18px; line-height: 1.65; display: flex; flex-direction: column; min-height: 100vh;
 }
-body::before { content: ""; position: fixed; inset: 0; pointer-events: none; opacity: .06; background-image: radial-gradient(var(--ink) .55px, transparent .55px); background-size: 7px 7px; }
+body::before { content: ""; position: fixed; inset: 0; pointer-events: none; opacity: 0; }
 body > * { animation: page-enter .55s cubic-bezier(.22, 1, .36, 1) both; }
 html[data-transitioning]::after { content: ""; position: fixed; inset: 0; z-index: 100; background: var(--paper); transform-origin: center; animation: page-card .42s cubic-bezier(.22, 1, .36, 1) both; }
 @keyframes page-enter { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
