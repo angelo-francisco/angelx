@@ -10,8 +10,12 @@ import HeaderLink from "./HeaderLink.astro";
 			<HeaderLink href="/">Blog</HeaderLink>
 			<HeaderLink href={`${SITE_URL}/about`}>Sobre Mim</HeaderLink>
 		</div>
-		<div class="social-links">
-			<a href="https://github.com/angelo-francisco" target="_blank">
+		<div class="header-actions">
+			<button class="theme-toggle" type="button" aria-label="Mudar para tema escuro" aria-pressed="false">
+				<span aria-hidden="true">◐</span>
+			</button>
+			<div class="social-links">
+				<a href="https://github.com/angelo-francisco" target="_blank">
 				<span class="sr-only">visit my github account</span>
 				<svg viewBox="0 0 16 16" aria-hidden="true" width="32" height="32"
 					><path
@@ -24,12 +28,25 @@ import HeaderLink from "./HeaderLink.astro";
 	</nav>
 </header>
 <style>
-	header { margin: 0; padding: 0 1rem; width: 100%; position: fixed; z-index: 2; top: 0; left: 0; background: rgba(246, 240, 229, .94); border-bottom: 2px solid var(--ink); }
+	header { margin: 0; padding: 0 1rem; width: 100%; position: fixed; z-index: 2; top: 0; left: 0; background: color-mix(in srgb, var(--paper) 94%, transparent); border-bottom: 2px solid var(--border); }
 	h2 { margin: 0; font-size: 1.4em; font-style: italic; user-select: none; }
 	nav { max-width: 980px; margin: auto; display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
 	nav a { padding: 1em .5em; color: var(--ink); border-bottom: 3px solid transparent; text-decoration: none; }
 	nav a:hover, nav a.active { color: var(--accent); border-bottom-color: var(--accent); }
 	.internal-links { display: flex; gap: .5rem; }
 	.social-links, .social-links a { display: flex; }
+	.header-actions { display: flex; align-items: center; gap: .25rem; }
+	.theme-toggle { display: grid; place-items: center; width: 2.25rem; height: 2.25rem; padding: 0; border: 1px solid var(--border); border-radius: 999px; background: transparent; color: var(--ink); cursor: pointer; font: inherit; }
+	.theme-toggle:hover { border-color: var(--accent); color: var(--accent); }
+	.theme-toggle span { font-size: 1.25rem; line-height: 1; }
 	@media (max-width: 720px) { .social-links { display: none; } }
 </style>
+<script>
+	const toggle = document.querySelector<HTMLButtonElement>(".theme-toggle");
+	toggle?.addEventListener("click", () => {
+		const isDark = document.documentElement.dataset.theme === "dark";
+		document.documentElement.dataset.theme = isDark ? "light" : "dark";
+		toggle.setAttribute("aria-pressed", String(!isDark));
+		toggle.setAttribute("aria-label", isDark ? "Mudar para tema escuro" : "Mudar para tema claro");
+	});
+</script>
