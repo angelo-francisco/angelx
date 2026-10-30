@@ -1,5 +1,7 @@
 :root {
   --accent: #2449ed;
+  --font-editorial: Georgia, "Times New Roman", serif;
+  --header-height: 76px;
   --ink: #151515;
   --paper: #fff;
   --muted: #737373;
@@ -14,12 +16,10 @@ html {
 }
 body {
   margin: 0;
+  padding-top: var(--header-height);
   background: var(--paper);
   color: var(--ink);
-  font:
-    18px/1.55 Georgia,
-    "Times New Roman",
-    serif;
+  font: 18px/1.55 var(--font-editorial);
 }
 main {
   max-width: 1120px;
@@ -30,7 +30,7 @@ a {
   color: inherit;
 }
 a:hover {
-  color: var(--accent);
+  color: inherit;
 }
 button,
 input {
@@ -174,8 +174,26 @@ h2 {
   color: inherit;
   font: inherit;
 }
-.tags button:hover {
-  color: var(--accent);
+.home a:not(:has(svg)),
+.home .tags button,
+.home .months button,
+.home .reset-filter {
+  background-image: linear-gradient(currentColor, currentColor);
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: 0% 1px;
+  transition: background-size 240ms ease;
+  text-decoration: none;
+}
+.home a:not(:has(svg)):hover,
+.home a:not(:has(svg)):focus-visible,
+.home .tags button:hover,
+.home .tags button:focus-visible,
+.home .months button:hover,
+.home .months button:focus-visible,
+.home .reset-filter:hover,
+.home .reset-filter:focus-visible {
+  background-size: 100% 1px;
 }
 .archive {
   padding-left: 36px;
@@ -399,7 +417,16 @@ h2 {
     gap: 25px;
   }
 }
+@media (max-width: 600px) {
+  :root {
+    --header-height: 112px;
+  }
+}
 @media (prefers-reduced-motion: reduce) {
+  .home a,
+  .home button {
+    transition: none !important;
+  }
   html {
     scroll-behavior: auto;
   }

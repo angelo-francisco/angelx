@@ -40,6 +40,11 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, "") + "/";
 </header>
 <style>
   .site-header {
+    position: fixed;
+    inset: 0 0 auto;
+    z-index: 100;
+    height: var(--header-height);
+    background: var(--paper);
     border-bottom: 1px solid var(--border);
     padding: 22px max(24px, calc((100% - 1120px) / 2));
     display: flex;
@@ -48,9 +53,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, "") + "/";
     gap: 24px;
   }
   .brand {
-    font:
-      24px/1.2 Georgia,
-      serif;
+    font: 24px/1.2 var(--font-editorial);
     text-decoration: none;
     white-space: nowrap;
   }
@@ -73,9 +76,18 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, "") + "/";
   }
   @media (max-width: 600px) {
     .site-header {
+      position: fixed;
+      inset: 0 0 auto;
+      z-index: 100;
+      height: var(--header-height);
+      background: var(--paper);
       padding: 20px;
       flex-wrap: wrap;
-      gap: 18px;
+      gap: 14px;
+      align-content: center;
+    }
+    .brand {
+      width: 100%;
     }
     .site-nav {
       gap: 20px;
