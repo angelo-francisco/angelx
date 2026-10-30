@@ -7,98 +7,72 @@ import { getCollection } from "astro:content";
 import FormattedDate from "../components/FormattedDate.astro";
 
 const posts = (await getCollection("blog")).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
-const months = new Intl.DateTimeFormat("pt-PT", { month: "long" });
-const currentYear = new Date().getFullYear();
-const archive = posts.reduce<Record<string, typeof posts>>((groups, post) => {
-	const year = String(post.data.pubDate.getFullYear());
-	(groups[year] ??= []).push(post);
-	return groups;
-}, {});
 const base = import.meta.env.BASE_URL;
+const monthFormatter = new Intl.DateTimeFormat("pt-PT", { month: "long" });
+const monthKey = (date: Date) => `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
+const archive = posts.reduce<Record<string, Record<string, typeof posts>>>((years, post) => {
+	const year = String(post.data.pubDate.getFullYear());
+	const month = monthKey(post.data.pubDate);
+	(years[year] ??= {});
+	(years[year][month] ??= []).push(post);
+	return years;
+}, {});
+const currentYear = new Date().getFullYear();
+const excerpt = (post: (typeof posts)[number]) => post.data.description || "Uma nota do arquivo pessoal.";
 ---
-
 <!doctype html>
 <html lang="pt-PT">
-	<head>
-		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
-		<style>
-			.home-layout { display: grid; grid-template-columns: minmax(0, 1fr) 270px; gap: 2rem; align-items: start; border-top: 1px solid var(--border); }
-			.hero { grid-column: 1 / -1; text-align: center; padding: 3.5rem 1rem 2.75rem; border-bottom: 1px solid var(--border); }
-			.eyebrow, .archive-label, .side-label { color: var(--ink); font: .72rem/1.2 monospace; letter-spacing: .08em; text-transform: uppercase; }
-			.eyebrow { display: none; }
-			.hero h1 { font-size: clamp(2rem, 3vw, 2.55rem); font-weight: 500; letter-spacing: -.04em; }
-			.hero h1 em { font-style: normal; }
-			.intro { max-width: 600px; margin: 0 auto 1.75rem; color: var(--muted); font-size: 1rem; }
-			.search-wrap { display: flex; max-width: 420px; margin: auto; border: 1px solid var(--ink); }
-			.search { flex: 1; min-width: 0; padding: .65rem .8rem; border: 0; color: var(--ink); background: var(--paper); font: .82rem monospace; outline: 0; }
-			.search-wrap button { width: 3rem; border: 0; border-left: 1px solid var(--border); background: var(--paper); color: var(--ink); }
-			.archive-section { display: flex; flex-direction: column; padding-top: 1.75rem; gap: 0; }
-			.archive-label { padding-bottom: 1rem; color: var(--muted); }
-			.archive-group { border-top: 1px solid var(--border); animation: archive-in .65s cubic-bezier(.22, 1, .36, 1) both; }
-			.archive-group:last-of-type { border-bottom: 1px solid var(--border); }
-			@keyframes archive-in { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
-			.archive-group summary { cursor: pointer; list-style: none; padding: 1rem 0; display: flex; justify-content: space-between; align-items: center; font: 1rem Georgia, serif; color: var(--ink); }
-			.archive-group summary::-webkit-details-marker { display: none; }
-			.archive-group summary::after { content: "⌄"; font: 1rem monospace; }
-			.archive-group[open] summary::after { content: "⌃"; }
-			.post-list { padding: 0 1.5rem .75rem; }
-			.post-list a { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; text-decoration: none; padding: .7rem 0; border-top: 1px solid var(--border); min-width: 0; }
-			.post-list h3 { margin: 0; font-size: 1.08rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-			.post-list h3::before { content: ""; }
-			.archive-month, .post-list .date { margin: 0; color: var(--muted); font: .7rem monospace; text-transform: capitalize; white-space: nowrap; }
-			.sidebar { position: sticky; top: 5.5rem; display: flex; flex-direction: column; gap: 0; padding: 1.75rem 0 0 2.5rem; border-left: 1px solid var(--border); min-height: 420px; }
-			.side-card { padding: 0 0 1.5rem; background: transparent; }
-			.side-card + .side-card { padding-top: 1.5rem; border-top: 1px solid var(--border); }
-			.quick-links { display: flex; flex-direction: column; gap: .75rem; margin: .9rem 0 0; padding: 0; list-style: none; }
-			.quick-links a { display: block; color: var(--ink); text-decoration: none; font-size: .9rem; line-height: 1.25; }
-			.quick-links a:hover { color: var(--accent); }
-			.no-results { display: none; color: var(--muted); font: .85rem monospace; }
-			@media (max-width: 800px) { .home-layout { display: block; } .hero { border-bottom: 1px solid var(--border); } .sidebar { position: static; margin-top: 2rem; padding: 1.5rem 0 0; border-left: 0; border-top: 1px solid var(--border); } }
-			@media (max-width: 520px) { .post-list a { align-items: flex-start; flex-direction: column; gap: .2rem; } }
-		</style>
-	</head>
+	<head><BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} /></head>
 	<body>
 		<Header />
 		<main>
-			<div class="home-layout">
-				<section class="hero" aria-labelledby="page-title">
-					<p class="eyebrow">notas de um cérebro em movimento</p>
-					<h1 id="page-title">My brain&apos;s backup, ideas and thoughts.</h1>
-					<p class="intro">Um espaço lento para pensar, guardar ideias e acompanhar a própria evolução.</p>
-					<div class="search-wrap"><label class="sr-only" for="post-search">Pesquisar textos</label><input class="search" id="post-search" type="search" placeholder="Pesquisar textos..." /><button type="button" aria-label="Pesquisar">⌕</button></div>
-				</section>
-				<div>
-
-					<section class="archive-section" aria-labelledby="archive-heading">
-						<p id="archive-heading" class="archive-label">arquivo / navegar por data</p>
-						{Object.entries(archive).map(([year, yearPosts]) => (
-							<details class="archive-group" open={Number(year) === currentYear}>
-								<summary>{year}<span>{yearPosts.length} {yearPosts.length === 1 ? "nota" : "notas"}</span></summary>
-								<div class="post-list">
-									{yearPosts.map((post) => (
-										<a class="post-link" data-search={`${post.data.title} ${months.format(post.data.pubDate)} ${year}`.toLowerCase()} href={`${base}${post.id.replace(/^\/+/, "")}/`}>
-											<div><p class="archive-month">{months.format(post.data.pubDate)}</p><h3>{post.data.title}</h3></div>
-											<p class="date"><FormattedDate date={post.data.pubDate} /></p>
-										</a>
-									))}
-								</div>
-							</details>
+			<section class="hero" aria-labelledby="page-title">
+				<h1 id="page-title">My brain&apos;s backup, ideias and thoughts.</h1>
+				<form class="search-wrap" id="search-form" role="search">
+					<label class="sr-only" for="post-search">Pesquisar textos</label>
+					<input class="search" id="post-search" type="search" placeholder="Pesquisar textos..." autocomplete="off" />
+					<button type="submit" aria-label="Pesquisar">⌕</button>
+				</form>
+			</section>
+			<div class="content-grid">
+				<section class="posts-column" aria-label="Publicações">
+					<div id="post-list">
+						{posts.map((post) => (
+							<article class="post-preview" data-search={`${post.data.title} ${excerpt(post)} ${(post.data.tags ?? []).join(" ")}`.toLowerCase()} data-year={post.data.pubDate.getFullYear()} data-month={monthKey(post.data.pubDate)}>
+								<p class="post-date"><FormattedDate date={post.data.pubDate} /></p>
+								<h2><a href={`${base}${post.id.replace(/^\/+/, "")}/`}>{post.data.title}</a></h2>
+								<p class="post-excerpt">{excerpt(post)}</p>
+								{post.data.tags && <ul class="tags" aria-label="Etiquetas">{post.data.tags.map((tag) => <li><button type="button" data-tag={tag}>{tag}</button></li>)}</ul>}
+							</article>
 						))}
-						<p class="no-results">Nenhuma nota encontrada.</p>
-					</section>
-				</div>
-				<aside class="sidebar" aria-label="Ferramentas do arquivo">
-					<div class="side-card"><p class="side-label">pesquisar no arquivo</p><label class="sr-only" for="post-search">Pesquisar posts</label><input class="search" id="post-search" type="search" placeholder="ex.: consistência" /></div>
-					<div class="side-card"><p class="side-label">títulos recentes</p><ul class="quick-links">{posts.slice(0, 5).map((post) => <li><a href={`${base}${post.id.replace(/^\/+/, "")}/`}>{post.data.title}</a></li>)}</ul></div>
+					</div>
+					<p class="empty-state" hidden>Nenhum texto encontrado.</p>
+				</section>
+				<aside class="archive" aria-labelledby="archive-title">
+					<h2 id="archive-title">ARQUIVO</h2>
+					{Object.entries(archive).sort(([a], [b]) => Number(b) - Number(a)).map(([year, months]) => (
+						<details class="year-group" open={Number(year) === currentYear}>
+							<summary><span>{year}</span><span class="count">{Object.values(months).flat().length}<b aria-hidden="true"></b></span></summary>
+							<div class="months">
+								{Object.entries(months).sort(([a], [b]) => b.localeCompare(a)).map(([key, monthPosts]) => <button type="button" data-filter-month={key}><span>{monthFormatter.format(monthPosts[0].data.pubDate)}</span><span>{monthPosts.length}</span></button>)}
+							</div>
+						</details>
+					))}
 				</aside>
 			</div>
 		</main>
 		<Footer />
 		<script>
-			const search = document.querySelector<HTMLInputElement>("#post-search");
-			const links = [...document.querySelectorAll<HTMLElement>(".post-link")];
-			const empty = document.querySelector<HTMLElement>(".no-results");
-			search?.addEventListener("input", () => { const query = search.value.trim().toLowerCase(); let visible = 0; links.forEach((link) => { const match = !query || link.dataset.search?.includes(query); link.hidden = !match; if (match) visible++; }); if (empty) empty.style.display = visible ? "none" : "block"; });
+			const input = document.querySelector<HTMLInputElement>("#post-search");
+			const form = document.querySelector<HTMLFormElement>("#search-form");
+			const cards = [...document.querySelectorAll<HTMLElement>(".post-preview")];
+			const empty = document.querySelector<HTMLElement>(".empty-state");
+			let activeMonth = "";
+			const filter = (query = input?.value.trim().toLowerCase() ?? "") => { let visible = 0; cards.forEach((card) => { const show = (!query || card.dataset.search?.includes(query)) && (!activeMonth || card.dataset.month === activeMonth); card.hidden = !show; if (show) visible++; }); if (empty) empty.hidden = visible > 0; };
+			input?.addEventListener("input", () => filter());
+			form?.addEventListener("submit", (event) => { event.preventDefault(); filter(); });
+			document.querySelectorAll<HTMLButtonElement>("[data-filter-month]").forEach((button) => button.addEventListener("click", () => { activeMonth = button.dataset.filterMonth ?? ""; filter(); }));
+			document.querySelectorAll<HTMLButtonElement>("[data-tag]").forEach((button) => button.addEventListener("click", () => { if (input) input.value = button.dataset.tag ?? ""; activeMonth = ""; filter(); }));
 		</script>
 	</body>
 </html>

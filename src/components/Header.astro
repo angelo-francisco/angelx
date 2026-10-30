@@ -3,27 +3,21 @@ const base = import.meta.env.BASE_URL;
 ---
 <header class="site-header">
 	<a class="brand" href={base}>Ângelo Francisco</a>
-	<nav id="main-nav" class="site-nav" aria-label="Navegação principal">
-		<a href={base}>Início</a><a href={`${base}about/`}>Sobre mim</a><a href="https://github.com/angelo-francisco" target="_blank" rel="noreferrer">GitHub</a>
-		<button class="theme-toggle" type="button" aria-label="Mudar para tema escuro" aria-pressed="false">preto / branco</button>
+	<nav class="site-nav" aria-label="Ligações externas">
+		<a href="https://github.com/angelo-francisco" target="_blank" rel="noreferrer">GitHub <span aria-hidden="true">◉</span></a>
+		<span class="nav-divider" aria-hidden="true"></span>
+		<a href={`${base}rss.xml`}>RSS <span aria-hidden="true">◔</span></a>
+		<span class="nav-divider" aria-hidden="true"></span>
+		<a href="https://www.linkedin.com/in/angelo-francisco/" target="_blank" rel="noreferrer">LinkedIn <span aria-hidden="true">▣</span></a>
 	</nav>
 </header>
 <style>
-	.site-header { position: sticky; top: 0; z-index: 10; display: flex; justify-content: space-between; align-items: center; gap: 1rem; width: 100%; padding: 1rem max(1rem, calc((100% - 1120px) / 2)); border-bottom: 1px solid var(--border); background: color-mix(in srgb, var(--paper) 92%, transparent); backdrop-filter: blur(12px); }
-	.brand { color: var(--ink); text-decoration: none; font: 800 1.15rem monospace; } .brand span { display: block; color: var(--muted); font-size: .58rem; letter-spacing: .08em; text-transform: uppercase; }
-	.site-nav { display: flex; align-items: center; gap: 1.25rem; } .site-nav a, .theme-toggle { color: var(--ink); background: transparent; border: 0; font: .78rem monospace; text-decoration: none; cursor: pointer; transition: color .2s ease, transform .2s ease; } .site-nav a:hover, .theme-toggle:hover { color: var(--accent); transform: translateY(-2px); }
-	@media (max-width: 650px) { .site-header { flex-wrap: wrap; } .site-nav { order: 3; width: 100%; justify-content: space-between; gap: .5rem; } }
+	.site-header { display:flex; justify-content:space-between; align-items:center; gap:2rem; width:100%; max-width:1250px; margin:0 auto; padding:1rem 0; border-bottom:1px solid var(--border); }
+	.brand { color:var(--ink); font:1.55rem/1.1 Newsreader, Georgia, serif; text-decoration:none; }
+	.site-nav { display:flex; align-items:center; gap:1rem; font:0.78rem/1 IBM Plex Mono, monospace; }
+	.site-nav a { color:var(--ink); text-decoration:none; transition:color .2s ease; }
+	.site-nav a:hover { color:var(--accent); }
+	.site-nav span[aria-hidden] { font-size:.9rem; margin-left:.25rem; }
+	.nav-divider { width:1px; height:1.2rem; background:var(--border); }
+	@media (max-width:700px) { .site-header { padding:1rem; } .brand { font-size:1.3rem; } .site-nav { gap:.65rem; font-size:.68rem; } .site-nav span[aria-hidden] { display:none; } }
 </style>
-<script>
-	document.querySelectorAll<HTMLAnchorElement>('a[href]').forEach((link) => {
-		const destination = new URL(link.href, window.location.href);
-		if (destination.origin !== window.location.origin || link.target === '_blank' || destination.pathname === window.location.pathname) return;
-		link.addEventListener('click', (event) => {
-			event.preventDefault();
-			document.documentElement.dataset.transitioning = 'true';
-			window.setTimeout(() => { window.location.href = link.href; }, 420);
-		});
-	});
-	const toggle = document.querySelector<HTMLButtonElement>(".theme-toggle");
-	toggle?.addEventListener("click", () => { const isDark = document.documentElement.dataset.theme === "dark"; document.documentElement.dataset.theme = isDark ? "light" : "dark"; toggle.setAttribute("aria-pressed", String(!isDark)); toggle.setAttribute("aria-label", isDark ? "Mudar para tema escuro" : "Mudar para tema claro"); });
-</script>
