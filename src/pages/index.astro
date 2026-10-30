@@ -2,7 +2,7 @@
 import BaseHead from "../components/BaseHead.astro";
 import Footer from "../components/Footer.astro";
 import Header from "../components/Header.astro";
-import { SITE_DESCRIPTION, SITE_TITLE, SITE_URL } from "../consts";
+import { SITE_DESCRIPTION, SITE_TITLE } from "../consts";
 import { getCollection } from "astro:content";
 import FormattedDate from "../components/FormattedDate.astro";
 
@@ -55,7 +55,7 @@ const archive = posts.reduce<Record<string, typeof posts>>((groups, post) => {
 						<h2 class="archive-year">{year}</h2>
 						<div class="post-list">
 							{yearPosts.map((post) => (
-								<a href={`${SITE_URL}${post.id}/`}>
+								<a href={`/${post.id.replace(/^\/+/, "")}/`}>
 									<div>
 										<p class="archive-month">{months.format(post.data.pubDate)}</p>
 										<h5 class="title">{post.data.title}</h5>
