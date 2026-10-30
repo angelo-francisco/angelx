@@ -1,107 +1,18 @@
 ---
-import { Image } from 'astro:assets';
 import type { CollectionEntry } from 'astro:content';
 import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
 import FormattedDate from '../components/FormattedDate.astro';
 import Header from '../components/Header.astro';
-
-type Props = CollectionEntry<'blog'>['data'] & {
-	headings?: { depth: number; slug: string; text: string }[];
-};
-
-const { title, description, pubDate, updatedDate, heroImage, headings = [] } = Astro.props;
+type Props = CollectionEntry<'blog'>['data'] & { headings?: { depth: number; slug: string; text: string }[] };
+const { title, description, pubDate, updatedDate, headings = [] } = Astro.props;
 ---
-
-<html lang="en">
-	<head>
-		<BaseHead title={title} description={description} />
-		<style>
-			main {
-				width: calc(100% - 2em);
-				max-width: 100%;
-				margin: 0;
-			}
-			.hero-image {
-				width: 100%;
-			}
-			.hero-image img {
-				display: block;
-				margin: 0 auto;
-				border-radius: 12px;
-				box-shadow: var(--box-shadow);
-			}
-			.article-layout {
-				display: grid;
-				grid-template-columns: 180px minmax(0, 720px);
-				gap: 3rem;
-				align-items: start;
-				max-width: 980px;
-				margin: auto;
-			}
-			.toc {
-				position: sticky;
-				top: 2rem;
-				padding-top: 1rem;
-				font: .75rem/1.5 monospace;
-			}
-			.toc-label { margin: 0 0 .75rem; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; }
-			.toc a { display: block; padding: .25rem 0; color: var(--muted); text-decoration: none; }
-			.toc a:hover { color: var(--accent); }
-			.toc a[data-depth="3"] { padding-left: .75rem; font-size: .7rem; }
-			.prose { min-width: 0; color: var(--ink); }
-			.title {
-				margin-bottom: 1em;
-				padding: 1em 0;
-				text-align: center;
-				line-height: 1;
-			}
-			.title h1 { margin: 0 0 0.5em 0; font-size: clamp(2.2rem, 5vw, 4rem); }
-			.date {
-				margin-bottom: 0.5em;
-				color: rgb(var(--gray));
-			}
-			.last-updated-on { font-style: italic; }
-			@media (max-width: 760px) {
-				.article-layout { display: block; }
-				.toc { position: static; padding: 0 1rem; margin-bottom: 1rem; border-left: 2px solid var(--accent); }
-			}
-		</style>
-	</head>
-
-	<body>
-		<Header />
-		<main>
-				<article>
-					<div class="article-layout">
-						{headings.length > 0 && (
-							<nav class="toc" aria-label="Navegação do artigo">
-								<p class="toc-label">neste texto</p>
-								{headings.filter((heading) => heading.depth >= 2).map((heading) => (
-									<a href={`#${heading.slug}`} data-depth={heading.depth}>{heading.text}</a>
-								))}
-							</nav>
-						)}
-						<div class="prose">
-						<div class="title">
-						<div class="date">
-							<FormattedDate date={pubDate} />
-							{
-								updatedDate && (
-									<div class="last-updated-on">
-										Last updated on <FormattedDate date={updatedDate} />
-									</div>
-								)
-							}
-						</div>
-						<h1>{title}</h1>
-						<hr />
-					</div>
-					<slot />
-						</div>
-					</div>
-				</article>
-		</main>
-		<Footer />
-	</body>
-</html>
+<html lang="pt-PT"><head><BaseHead title={title} description={description} /><style>
+	main { width: calc(100% - 2em); max-width: 1120px; margin: auto; }
+	.article-layout { display: grid; grid-template-columns: minmax(0, 720px) 220px; justify-content: center; gap: 4rem; align-items: start; }
+	.toc { position: sticky; top: 5rem; order: 2; padding: 1rem 0; font: .75rem/1.5 monospace; }
+	.toc-label { margin: 0 0 .75rem; color: var(--accent); text-transform: uppercase; letter-spacing: .08em; }
+	.toc a { display: block; padding: .3rem 0; color: var(--muted); text-decoration: none; border-bottom: 1px dashed var(--border); } .toc a:hover { color: var(--accent); } .toc a[data-depth="3"] { padding-left: .75rem; font-size: .7rem; }
+	.prose { min-width: 0; } .title { margin-bottom: 1em; padding: 4em 0 1em; text-align: left; line-height: 1; } .title h1 { margin: 0 0 .5em; font-size: clamp(2.2rem, 5vw, 4rem); } .date { margin-bottom: .5em; color: var(--muted); font: .75rem monospace; } .last-updated-on { font-style: italic; }
+	@media (max-width: 760px) { .article-layout { display: block; } .toc { position: static; order: 0; padding: 1rem; margin-top: 1rem; border-left: 2px solid var(--accent); } .title { padding-top: 2rem; } }
+</style></head><body><Header /><main><article><div class="article-layout"><div class="prose"><div class="title"><div class="date"><FormattedDate date={pubDate} />{updatedDate && <div class="last-updated-on">Atualizado em <FormattedDate date={updatedDate} /></div>}</div><h1>{title}</h1><hr /></div><slot /></div>{headings.length > 0 && <nav class="toc" aria-label="Navegação do artigo"><p class="toc-label">neste texto</p>{headings.filter((heading) => heading.depth >= 2).map((heading) => <a href={`#${heading.slug}`} data-depth={heading.depth}>{heading.text}</a>)}</nav>}</div></article></main><Footer /></body></html>
