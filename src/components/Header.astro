@@ -24,46 +24,12 @@ import HeaderLink from "./HeaderLink.astro";
 	</nav>
 </header>
 <style>
-	header {
-		margin: 0;
-		padding: 0 1em;
-		width: 100%;
-		position: fixed;
-		top: 0;
-		left: 0;
-		background-color: #ffff;
-		border: solid 1px rgba(var(--gray-light));
-		box-shadow: 0 8px 8px rgba(var(--black), 5%);
-	}
-	h2 {
-		margin: 0;
-		font-size: 1.5em;
-		font-style: italic;
-		user-select: none;
-	}
-
-	nav {
-		display: flex;
-		align-items: center;
-		justify-content: space-around;
-	}
-	nav a {
-		padding: 1em 0.5em;
-		color: var(--black);
-		border-bottom: 4px solid transparent;
-		text-decoration: none;
-	}
-	nav a.active {
-		text-decoration: none;
-		border-bottom-color: var(--accent);
-	}
-	.social-links,
-	.social-links a {
-		display: flex;
-	}
-	@media (max-width: 720px) {
-		.social-links {
-			display: none;
-		}
-	}
+	header { margin: 0; padding: 0 1rem; width: 100%; position: fixed; z-index: 2; top: 0; left: 0; background: rgba(246, 240, 229, .94); border-bottom: 2px solid var(--ink); }
+	h2 { margin: 0; font-size: 1.4em; font-style: italic; user-select: none; }
+	nav { max-width: 980px; margin: auto; display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+	nav a { padding: 1em .5em; color: var(--ink); border-bottom: 3px solid transparent; text-decoration: none; }
+	nav a:hover, nav a.active { color: var(--accent); border-bottom-color: var(--accent); }
+	.internal-links { display: flex; gap: .5rem; }
+	.social-links, .social-links a { display: flex; }
+	@media (max-width: 720px) { .social-links { display: none; } }
 </style>
