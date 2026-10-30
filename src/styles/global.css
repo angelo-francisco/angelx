@@ -53,7 +53,7 @@ main {
 }
 
 h1, h2, h3, h4, h5, h6 { margin: 0 0 .65rem; color: var(--ink); line-height: 1.1; letter-spacing: -.035em; }
-h1 { font-size: clamp(2.7rem, 7vw, 5.4rem); }
+h1 { font-size: clamp(2.35rem, 5vw, 4.2rem); }
 h2 { font-size: clamp(2rem, 4vw, 3.4rem); }
 h3 { font-size: 2rem; }
 h4 { font-size: 1.5rem; }

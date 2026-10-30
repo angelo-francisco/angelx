@@ -3,13 +3,19 @@ const today = new Date();
 ---
 
 <footer>
-	&copy; 2026-{today.getFullYear()} Ângelo Francisco. Todos os direitos reservados.
+	<span>© {today.getFullYear()} Ângelo Francisco</span>
+	<span>feito com calma na internet</span>
 </footer>
 <style>
 	footer {
-		padding: 1em 0em;
-		background-color: transparent;
-		color: rgb(var(--gray-dark));
-		text-align: center;
+		display: flex;
+		justify-content: space-between;
+		gap: 1rem;
+		width: min(820px, calc(100% - 2em));
+		margin: auto;
+		padding: 1.5rem 0 2rem;
+		color: var(--muted);
+		font: .72rem/1.4 monospace;
 	}
+	@media (max-width: 520px) { footer { flex-direction: column; gap: .25rem; } }
 </style>

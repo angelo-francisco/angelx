@@ -9,6 +9,13 @@ import FormattedDate from "../components/FormattedDate.astro";
 const posts = (await getCollection("blog")).sort(
 	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
 );
+
+const months = new Intl.DateTimeFormat("pt-PT", { month: "long" });
+const archive = posts.reduce<Record<string, typeof posts>>((groups, post) => {
+	const year = String(post.data.pubDate.getFullYear());
+	(groups[year] ??= []).push(post);
+	return groups;
+}, {});
 ---
 
 <!doctype html>
@@ -18,14 +25,17 @@ const posts = (await getCollection("blog")).sort(
 		<style>
 			.eyebrow { color: var(--accent); font: 700 .78rem/1.2 monospace; letter-spacing: .12em; text-transform: uppercase; }
 			.intro { max-width: 570px; font-size: 1.18rem; color: var(--muted); }
-			section { display: flex; flex-direction: column; padding: 2rem 0 0; margin: 0; gap: 0; }
-			section::before { content: "arquivo / textos recentes"; color: var(--muted); font: 700 .75rem monospace; letter-spacing: .1em; text-transform: uppercase; margin-bottom: .8rem; }
-			section a { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; text-decoration: none; padding: 1rem 0; border-top: 2px solid var(--ink); min-width: 0; }
-			section a:last-child { border-bottom: 2px solid var(--ink); }
-			section h5 { margin: 0; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-			section h5::before { content: "↳ "; color: var(--accent); }
-			section .date { margin: 0; color: var(--muted); font: .75rem monospace; white-space: nowrap; }
-			@media (max-width: 520px) { section a { align-items: flex-start; flex-direction: column; gap: .2rem; } }
+			section { display: flex; flex-direction: column; padding: 2rem 0 0; margin: 0; gap: 2rem; }
+			.archive-label { color: var(--muted); font: 700 .75rem monospace; letter-spacing: .1em; text-transform: uppercase; }
+			.archive-year { margin: 0 0 .75rem; font: 700 1.25rem monospace; color: var(--accent); }
+			.archive-month { margin: 0 0 .25rem; color: var(--muted); font: .75rem monospace; text-transform: capitalize; }
+			.post-list { display: flex; flex-direction: column; gap: 0; }
+			.post-list a { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; text-decoration: none; padding: .8rem 0; border-top: 1px solid var(--border); min-width: 0; }
+			.post-list a:last-child { border-bottom: 1px solid var(--border); }
+			.post-list h5 { margin: 0; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+			.post-list h5::before { content: "↳ "; color: var(--accent); }
+			.post-list .date { margin: 0; color: var(--muted); font: .75rem monospace; white-space: nowrap; }
+			@media (max-width: 520px) { .post-list a { align-items: flex-start; flex-direction: column; gap: .2rem; } }
 		</style>
 	</head>
 	<body>
@@ -38,17 +48,24 @@ const posts = (await getCollection("blog")).sort(
 				histórias e perguntas que ainda não têm resposta.
 			</p>
 
-			<section>
-				{
-					posts.map((post) => (
-						<a href={`${SITE_URL}${post.id}/`}>
-							<h5 class="title">{post.data.title}</h5>
-							<p class="date">
-								<FormattedDate date={post.data.pubDate} />
-							</p>
-						</a>
-					))
-				}
+			<section aria-labelledby="archive-heading">
+				<p id="archive-heading" class="archive-label">arquivo / navegar por data</p>
+				{Object.entries(archive).map(([year, yearPosts]) => (
+					<div class="archive-group">
+						<h2 class="archive-year">{year}</h2>
+						<div class="post-list">
+							{yearPosts.map((post) => (
+								<a href={`${SITE_URL}${post.id}/`}>
+									<div>
+										<p class="archive-month">{months.format(post.data.pubDate)}</p>
+										<h5 class="title">{post.data.title}</h5>
+									</div>
+									<p class="date"><FormattedDate date={post.data.pubDate} /></p>
+								</a>
+							))}
+						</div>
+					</div>
+				))}
 			</section>
 		</main>
 		<Footer />
