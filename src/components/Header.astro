@@ -1,46 +1,36 @@
----
-import { SITE_TITLE, SITE_URL } from "../consts";
-import HeaderLink from "./HeaderLink.astro";
----
-
-<header>
-	<nav>
-		<h2><a href={SITE_URL}>{SITE_TITLE}</a></h2>
-		<div class="internal-links">
-			<HeaderLink href="/">Blog</HeaderLink>
-			<HeaderLink href={`${SITE_URL}/about`}>Sobre Mim</HeaderLink>
-		</div>
-		<div class="header-actions">
-			<button class="theme-toggle" type="button" aria-label="Mudar para tema escuro" aria-pressed="false">
-				<span aria-hidden="true">◐</span>
-			</button>
-			<div class="social-links">
-				<a href="https://github.com/angelo-francisco" target="_blank">
-				<span class="sr-only">visit my github account</span>
-				<svg viewBox="0 0 16 16" aria-hidden="true" width="32" height="32"
-					><path
-						fill="currentColor"
-						d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z"
-					></path>				</svg
-				>
-			</a>
-			</div>
-		</div>
+<header class="floating-nav-wrap">
+	<nav class="floating-nav" aria-label="Navegação principal">
+		<a class="nav-item" href="/" aria-label="Início">
+			<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1V10Z" /></svg>
+			<span>Início</span>
+		</a>
+		<a class="nav-item" href="/" aria-label="Blog">
+			<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h14a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1Zm3 4h8M8 12h8M8 16h5" /></svg>
+			<span>Blog</span>
+		</a>
+		<a class="nav-item" href="/about" aria-label="Sobre mim">
+			<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3" /><path d="M5 20a7 7 0 0 1 14 0" /></svg>
+			<span>Sobre mim</span>
+		</a>
+		<a class="nav-item" href="https://github.com/angelo-francisco" target="_blank" rel="noreferrer" aria-label="GitHub">
+			<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 0 0-2.85 17.54c.45.08.62-.2.62-.44v-1.54c-2.52.55-3.05-1.2-3.05-1.2-.41-1.04-1-1.32-1-1.32-.82-.56.06-.55.06-.55.9.06 1.37.92 1.37.92.8 1.37 2.1.98 2.61.75.08-.58.31-.98.57-1.2-2.01-.23-4.12-1-4.12-4.43 0-.98.35-1.78.92-2.4-.09-.23-.4-1.14.09-2.37 0 0 .75-.24 2.46.92a8.6 8.6 0 0 1 4.48 0c1.71-1.16 2.46-.92 2.46-.92.49 1.23.18 2.14.09 2.37.57.62.92 1.42.92 2.4 0 3.44-2.11 4.2-4.13 4.42.32.28.61.83.61 1.67v2.48c0 .24.16.52.62.43A9 9 0 0 0 12 3Z" /></svg>
+			<span>GitHub</span>
+		</a>
+		<button class="nav-item theme-toggle" type="button" aria-label="Mudar para tema escuro" aria-pressed="false">
+			<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 15.2A8.5 8.5 0 0 1 8.8 3.5 8.5 8.5 0 1 0 20.5 15.2Z" /></svg>
+			<span>Tema</span>
+		</button>
 	</nav>
 </header>
 <style>
-	header { margin: 0; padding: 0 1rem; width: 100%; position: fixed; z-index: 2; top: 0; left: 0; background: color-mix(in srgb, var(--paper) 94%, transparent); border-bottom: 2px solid var(--border); }
-	h2 { margin: 0; font-size: 1.4em; font-style: italic; user-select: none; }
-	nav { max-width: 980px; margin: auto; display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
-	nav a { padding: 1em .5em; color: var(--ink); border-bottom: 3px solid transparent; text-decoration: none; }
-	nav a:hover, nav a.active { color: var(--accent); border-bottom-color: var(--accent); }
-	.internal-links { display: flex; gap: .5rem; }
-	.social-links, .social-links a { display: flex; }
-	.header-actions { display: flex; align-items: center; gap: .25rem; }
-	.theme-toggle { display: grid; place-items: center; width: 2.25rem; height: 2.25rem; padding: 0; border: 1px solid var(--border); border-radius: 999px; background: transparent; color: var(--ink); cursor: pointer; font: inherit; }
-	.theme-toggle:hover { border-color: var(--accent); color: var(--accent); }
-	.theme-toggle span { font-size: 1.25rem; line-height: 1; }
-	@media (max-width: 720px) { .social-links { display: none; } }
+	.floating-nav-wrap { position: fixed; z-index: 10; right: 0; bottom: 1.25rem; left: 0; display: flex; justify-content: center; pointer-events: none; }
+	.floating-nav { display: flex; align-items: center; gap: .25rem; width: max-content; padding: .4rem; border: 1px solid color-mix(in srgb, var(--border) 75%, transparent); border-radius: 999px; background: color-mix(in srgb, var(--paper) 88%, transparent); box-shadow: 0 10px 30px color-mix(in srgb, var(--ink) 16%, transparent); backdrop-filter: blur(14px); pointer-events: auto; }
+	.nav-item { display: flex; align-items: center; gap: 0; width: 2.75rem; height: 2.75rem; overflow: hidden; padding: 0 .75rem; border: 0; border-radius: 999px; color: var(--ink); background: transparent; text-decoration: none; white-space: nowrap; cursor: pointer; font: inherit; transition: width .25s ease, gap .25s ease, color .2s ease, background .2s ease; }
+	.nav-item:hover, .nav-item:focus-visible { width: 7.2rem; gap: .55rem; color: var(--accent); background: var(--paper-dark); outline: none; }
+	.nav-item svg { flex: 0 0 1.25rem; width: 1.25rem; height: 1.25rem; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.7; }
+	.nav-item span { transform: translateX(-.5rem); opacity: 0; transition: transform .25s ease, opacity .2s ease; }
+	.nav-item:hover span, .nav-item:focus-visible span { transform: translateX(0); opacity: 1; }
+	@media (max-width: 520px) { .floating-nav-wrap { bottom: .75rem; } .floating-nav { gap: 0; } .nav-item { width: 2.55rem; height: 2.55rem; padding: 0 .65rem; } .nav-item:hover, .nav-item:focus-visible { width: 6.4rem; } }
 </style>
 <script>
 	const toggle = document.querySelector<HTMLButtonElement>(".theme-toggle");
