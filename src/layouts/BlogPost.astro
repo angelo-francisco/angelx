@@ -6,9 +6,11 @@ import Footer from '../components/Footer.astro';
 import FormattedDate from '../components/FormattedDate.astro';
 import Header from '../components/Header.astro';
 
-type Props = CollectionEntry<'blog'>['data'];
+type Props = CollectionEntry<'blog'>['data'] & {
+	headings?: { depth: number; slug: string; text: string }[];
+};
 
-const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
+const { title, description, pubDate, updatedDate, heroImage, headings = [] } = Astro.props;
 ---
 
 <html lang="en">
@@ -29,28 +31,40 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 				border-radius: 12px;
 				box-shadow: var(--box-shadow);
 			}
-			.prose {
-				width: 720px;
-				max-width: calc(100% - 2em);
+			.article-layout {
+				display: grid;
+				grid-template-columns: 180px minmax(0, 720px);
+				gap: 3rem;
+				align-items: start;
+				max-width: 980px;
 				margin: auto;
-				padding: 1em;
-				color: rgb(var(--gray-dark));
 			}
+			.toc {
+				position: sticky;
+				top: 2rem;
+				padding-top: 1rem;
+				font: .75rem/1.5 monospace;
+			}
+			.toc-label { margin: 0 0 .75rem; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; }
+			.toc a { display: block; padding: .25rem 0; color: var(--muted); text-decoration: none; }
+			.toc a:hover { color: var(--accent); }
+			.toc a[data-depth="3"] { padding-left: .75rem; font-size: .7rem; }
+			.prose { min-width: 0; color: var(--ink); }
 			.title {
 				margin-bottom: 1em;
 				padding: 1em 0;
 				text-align: center;
 				line-height: 1;
 			}
-			.title h1 {
-				margin: 0 0 0.5em 0;
-			}
+			.title h1 { margin: 0 0 0.5em 0; font-size: clamp(2.2rem, 5vw, 4rem); }
 			.date {
 				margin-bottom: 0.5em;
 				color: rgb(var(--gray));
 			}
-			.last-updated-on {
-				font-style: italic;
+			.last-updated-on { font-style: italic; }
+			@media (max-width: 760px) {
+				.article-layout { display: block; }
+				.toc { position: static; padding: 0 1rem; margin-bottom: 1rem; border-left: 2px solid var(--accent); }
 			}
 		</style>
 	</head>
@@ -58,9 +72,18 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 	<body>
 		<Header />
 		<main>
-			<article>
-				<div class="prose">
-					<div class="title">
+				<article>
+					<div class="article-layout">
+						{headings.length > 0 && (
+							<nav class="toc" aria-label="Navegação do artigo">
+								<p class="toc-label">neste texto</p>
+								{headings.filter((heading) => heading.depth >= 2).map((heading) => (
+									<a href={`#${heading.slug}`} data-depth={heading.depth}>{heading.text}</a>
+								))}
+							</nav>
+						)}
+						<div class="prose">
+						<div class="title">
 						<div class="date">
 							<FormattedDate date={pubDate} />
 							{
@@ -75,8 +98,9 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 						<hr />
 					</div>
 					<slot />
-				</div>
-			</article>
+						</div>
+					</div>
+				</article>
 		</main>
 		<Footer />
 	</body>
