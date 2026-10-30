@@ -1,0 +1,91 @@
+---
+import { getCollection } from "astro:content";
+import BaseHead from "../components/BaseHead.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import { monthKey, monthName, postURL, readingTime } from "../lib/posts";
+const posts = (await getCollection("blog")).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+);
+const years = [...new Set(posts.map((p) => p.data.pubDate.getUTCFullYear()))];
+---
+
+<!doctype html>
+<html lang="pt-PT">
+  <head>
+    <BaseHead
+      title="Arquivo — Todos os textos"
+      description="Uma lista cronológica do que já escrevi por aqui."
+    />
+  </head>
+  <body>
+    <Header />
+    <main>
+      <header class="page-heading">
+        <div class="eyebrow">Arquivo</div>
+        <h1>Todos os textos.</h1>
+        <p>Uma lista cronológica do que já escrevi por aqui.</p>
+      </header>
+      <nav class="year-tabs" aria-label="Anos do arquivo">
+        {years.map((year, i) => (
+          <a href={`#year-${year}`} aria-current={i === 0 ? "true" : undefined}>
+            {year}
+          </a>
+        ))}
+      </nav>
+      {years.map((year) => (
+        <section id={`year-${year}`} aria-label={`Textos de ${year}`}>
+          {[
+            ...new Set(
+              posts
+                .filter((p) => p.data.pubDate.getUTCFullYear() === year)
+                .map((p) => monthKey(p.data.pubDate)),
+            ),
+          ].map((month) => (
+            <section class="archive-month">
+              <h2>
+                {monthName(
+                  posts.find((p) => monthKey(p.data.pubDate) === month)!.data
+                    .pubDate,
+                )}{" "}
+                de {year}{" "}
+                <span>
+                  (
+                  {
+                    posts.filter((p) => monthKey(p.data.pubDate) === month)
+                      .length
+                  }
+                  )
+                </span>
+              </h2>
+              {posts
+                .filter((p) => monthKey(p.data.pubDate) === month)
+                .map((post) => (
+                  <article class="archive-row">
+                    <time
+                      class="post-date"
+                      datetime={post.data.pubDate.toISOString()}
+                    >
+                      {new Intl.DateTimeFormat("pt-PT", {
+                        month: "short",
+                        day: "numeric",
+                        timeZone: "UTC",
+                      }).format(post.data.pubDate)}
+                    </time>
+                    <a href={postURL(post.id)}>{post.data.title}</a>
+                    <ul class="tags">
+                      {post.data.tags.map((tag) => (
+                        <li>#{tag}</li>
+                      ))}
+                    </ul>
+                    <span class="reading-time">{readingTime(post)} min</span>
+                  </article>
+                ))}
+            </section>
+          ))}
+        </section>
+      ))}
+    </main>
+    <Footer />
+  </body>
+</html>

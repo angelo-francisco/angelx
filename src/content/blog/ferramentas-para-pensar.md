@@ -1,6 +1,7 @@
 ---
 title: 'Três ferramentas para pensar melhor'
 description: 'Notas práticas sobre curiosidade, foco e trabalho criativo.'
+tags: ['produtividade', 'ferramentas', 'pensamento']
 pubDate: 'Sep 04 2026'
 ---
 

@@ -1,6 +1,7 @@
 ---
 title: 'Diário de uma mudança pequena'
 description: 'O que acontece quando trocamos velocidade por consistência.'
+tags: ['hábitos', 'diário', 'vida']
 pubDate: 'Aug 12 2026'
 ---
 
