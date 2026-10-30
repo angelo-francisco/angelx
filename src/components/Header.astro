@@ -94,3 +94,25 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, "") + "/";
     }
   }
 </style>
+
+<script>
+  document
+    .querySelectorAll<HTMLAnchorElement>('a[href^="/angelx/"]')
+    .forEach((link) => {
+      link.addEventListener("click", (event) => {
+        if (
+          event.metaKey ||
+          event.ctrlKey ||
+          event.shiftKey ||
+          event.altKey ||
+          link.target === "_blank"
+        )
+          return;
+        event.preventDefault();
+        document.body.classList.add("is-navigating");
+        window.setTimeout(() => {
+          window.location.href = link.href;
+        }, 380);
+      });
+    });
+</script>
