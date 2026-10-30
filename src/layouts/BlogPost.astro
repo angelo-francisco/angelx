@@ -1,18 +1,209 @@
 ---
-import type { CollectionEntry } from 'astro:content';
-import BaseHead from '../components/BaseHead.astro';
-import Footer from '../components/Footer.astro';
-import FormattedDate from '../components/FormattedDate.astro';
-import Header from '../components/Header.astro';
-type Props = CollectionEntry<'blog'>['data'] & { headings?: { depth: number; slug: string; text: string }[] };
-const { title, description, pubDate, updatedDate, headings = [] } = Astro.props;
+import type { CollectionEntry } from "astro:content";
+import BaseHead from "../components/BaseHead.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import FormattedDate from "../components/FormattedDate.astro";
+type Props = CollectionEntry<"blog">["data"] & {
+  headings?: { depth: number; slug: string; text: string }[];
+  minutes?: number;
+};
+const {
+  title,
+  description,
+  pubDate,
+  updatedDate,
+  tags = [],
+  headings = [],
+  minutes = 1,
+} = Astro.props;
+const sections = headings.filter((h) => h.depth >= 2);
 ---
-<html lang="pt-PT"><head><BaseHead title={title} description={description} /><style>
-	main { width: calc(100% - 2em); max-width: 1120px; margin: auto; }
-	.article-layout { display: grid; grid-template-columns: minmax(0, 720px) 220px; justify-content: center; gap: 4rem; align-items: start; }
-	.toc { position: sticky; top: 5rem; order: 2; padding: 1rem 0; font: .75rem/1.5 monospace; }
-	.toc-label { margin: 0 0 .75rem; color: var(--accent); text-transform: uppercase; letter-spacing: .08em; }
-	.toc a { display: block; padding: .3rem 0; color: var(--muted); text-decoration: none; border-bottom: 1px dashed var(--border); } .toc a:hover { color: var(--accent); } .toc a[data-depth="3"] { padding-left: .75rem; font-size: .7rem; }
-	.prose { min-width: 0; } .title { margin-bottom: 1em; padding: 4em 0 1em; text-align: left; line-height: 1; } .title h1 { margin: 0 0 .5em; font-size: clamp(2.2rem, 5vw, 4rem); } .date { margin-bottom: .5em; color: var(--muted); font: .75rem monospace; } .last-updated-on { font-style: italic; }
-	@media (max-width: 760px) { .article-layout { display: block; } .toc { position: static; order: 0; padding: 1rem; margin-top: 1rem; border-left: 2px solid var(--accent); } .title { padding-top: 2rem; } }
-</style></head><body><Header /><main><article><div class="article-layout"><div class="prose"><div class="title"><div class="date"><FormattedDate date={pubDate} />{updatedDate && <div class="last-updated-on">Atualizado em <FormattedDate date={updatedDate} /></div>}</div><h1>{title}</h1><hr /></div><slot /></div>{headings.length > 0 && <nav class="toc" aria-label="Navegação do artigo"><p class="toc-label">neste texto</p>{headings.filter((heading) => heading.depth >= 2).map((heading) => <a href={`#${heading.slug}`} data-depth={heading.depth}>{heading.text}</a>)}</nav>}</div></article></main><Footer /></body></html>
+
+<!doctype html>
+<html lang="pt-PT">
+  <head>
+    <BaseHead title={title} description={description} />
+  </head>
+  <body>
+    <Header />
+    <main class="post-main">
+      <a
+        class="back-link"
+        href={import.meta.env.BASE_URL.replace(/\/$/, "") + "/"}
+      >
+        ← &nbsp; Voltar ao blog
+      </a>
+      <div class="article-layout">
+        <article class="prose">
+          <header class="article-title">
+            <div class="article-meta">
+              <FormattedDate date={pubDate} />
+              <span>·</span>
+              <span>{minutes} min de leitura</span>
+              <span>·</span>
+              <span>{tags.map((tag) => `#${tag}`).join("  ")}</span>
+            </div>
+            <h1>{title}</h1>
+            {updatedDate && (
+              <p class="article-meta">
+                Atualizado em <FormattedDate date={updatedDate} />
+              </p>
+            )}
+          </header>
+          <slot />
+        </article>
+        {sections.length > 0 && (
+          <nav class="toc" aria-label="Neste texto">
+            <h2 class="eyebrow">Neste texto</h2>
+            {sections.map((heading, i) => (
+              <a
+                href={`#${heading.slug}`}
+                class:list={{ active: i === 0 }}
+                data-depth={heading.depth}
+              >
+                {heading.text}
+              </a>
+            ))}
+          </nav>
+        )}
+      </div>
+    </main>
+    <Footer />
+    <script>
+      const links = [...document.querySelectorAll<HTMLAnchorElement>(".toc a")];
+      if ("IntersectionObserver" in window) {
+        const observer = new IntersectionObserver(
+          (entries) => {
+            for (const entry of entries)
+              if (entry.isIntersecting)
+                links.forEach((link) => {
+                  const active =
+                    decodeURIComponent(link.hash.slice(1)) === entry.target.id;
+                  link.classList.toggle("active", active);
+                  if (active) link.setAttribute("aria-current", "location");
+                  else link.removeAttribute("aria-current");
+                });
+          },
+          { rootMargin: "-10% 0px -65% 0px" },
+        );
+        links.forEach((link) => {
+          const heading = document.getElementById(
+            decodeURIComponent(link.hash.slice(1)),
+          );
+          if (heading) observer.observe(heading);
+        });
+      }
+    </script>
+  </body>
+</html>
+<style>
+  .post-main {
+    padding-top: 28px;
+  }
+  .back-link {
+    display: inline-block;
+    font:
+      14px Arial,
+      sans-serif;
+    color: var(--muted);
+    text-decoration: none;
+    margin-bottom: 32px;
+  }
+  .article-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 230px;
+    gap: 40px;
+    align-items: start;
+  }
+  .prose {
+    min-width: 0;
+    font-size: 20px;
+    line-height: 1.6;
+    color: #393939;
+  }
+  .article-title h1 {
+    color: var(--ink);
+    margin: 16px 0 22px;
+  }
+  .article-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    color: var(--muted);
+    font: 11px/1.6 monospace;
+    text-transform: uppercase;
+  }
+  .article-meta span:last-child {
+    text-transform: none;
+  }
+  .prose :global(h2) {
+    font-size: 30px;
+    margin: 36px 0 18px;
+    color: var(--ink);
+    scroll-margin-top: 28px;
+  }
+  .prose :global(h3) {
+    font-size: 25px;
+    margin-top: 32px;
+    scroll-margin-top: 28px;
+  }
+  .prose :global(p) {
+    margin-bottom: 20px;
+  }
+  .prose > :global(p:first-of-type) {
+    padding-bottom: 30px;
+    border-bottom: 1px solid #999;
+  }
+  .prose :global(blockquote) {
+    border-left: 2px solid var(--border);
+    margin: 24px 0;
+    padding-left: 24px;
+    font-style: italic;
+  }
+  .toc {
+    position: sticky;
+    top: 30px;
+    border-left: 1px solid var(--border);
+    padding: 12px 0 12px 32px;
+    font:
+      14px/1.5 Arial,
+      sans-serif;
+  }
+  .toc h2 {
+    color: var(--accent);
+  }
+  .toc a {
+    display: block;
+    text-decoration: none;
+    color: var(--muted);
+    padding: 7px 0 7px 12px;
+    border-left: 1px solid var(--border);
+  }
+  .toc a.active {
+    color: var(--ink);
+    border-left: 3px solid var(--accent);
+    padding-left: 10px;
+  }
+  .toc a[data-depth="3"] {
+    padding-left: 20px;
+  }
+  @media (max-width: 760px) {
+    .article-layout {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    .toc {
+      position: static;
+      order: -1;
+      width: 100%;
+    }
+    .prose {
+      font-size: 18px;
+    }
+    .article-title h1 {
+      font-size: 40px;
+    }
+  }
+</style>
